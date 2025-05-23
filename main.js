@@ -1,7 +1,11 @@
 async function recognize(base64, lang, options) {
     const { config, utils } = options;
     const { tauriFetch: fetch } = utils;
-    let { model = "qwen-vl-plus", apiKey } = config;
+    let { model = "qwen-vl-plus", apiKey, prompt } = config;
+
+    if (!prompt) {
+        prompt = "任务: 文本扫描提取\n\n工作模式:\n- 逐字逐句扫描文本\n- 完全保留原始文字，不做分析和总结\n- 将图片视为文档页面\n\n处理要求:\n1. 文本处理\n   - 严格按照原文字序提取\n   - 保持标点符号和格式不变\n   - 不省略任何文字内容\n\n2. 图片处理\n   - 每张图片视为独立页面\n   - 与文本页面同等对待\n   - 保持原有顺序编号\n\n3. 文档整体性\n   - 维持页面间逻辑顺序\n   - 保持语义连贯性\n   - 完整还原文档结构\n\n输出要求:\n- 完整提取所有内容\n- 保持文档原貌\n- 不加入主观分析";
+    }
 
     const requestPath = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
 
@@ -18,7 +22,7 @@ async function recognize(base64, lang, options) {
                 "content": [
                     {
                         "type": "text",
-                        "text": "任务: 文本扫描提取\n\n工作模式:\n- 逐字逐句扫描文本\n- 完全保留原始文字，不做分析和总结\n- 将图片视为文档页面\n\n处理要求:\n1. 文本处理\n   - 严格按照原文字序提取\n   - 保持标点符号和格式不变\n   - 不省略任何文字内容\n\n2. 图片处理\n   - 每张图片视为独立页面\n   - 与文本页面同等对待\n   - 保持原有顺序编号\n\n3. 文档整体性\n   - 维持页面间逻辑顺序\n   - 保持语义连贯性\n   - 完整还原文档结构\n\n输出要求:\n- 完整提取所有内容\n- 保持文档原貌\n- 不加入主观分析"
+                        "text": prompt
                     },
                     {
                         "type": "image_url",
